@@ -9,10 +9,11 @@ import subprocess
 
 # Check if the platform is NIDAP
 def platform_is_nidap():
-    np.any(['nidap.nih.gov' in x for x in subprocess.run('conda config --show channels', shell=True, capture_output=True).stdout.decode().split('\n')[1:-1]])
+    return np.any(['nidap.nih.gov' in x for x in subprocess.run('conda config --show channels', shell=True, capture_output=True).stdout.decode().split('\n')[1:-1]])
 
 
 # Load the data according to the platform we're on
+@st.cache_data
 def load_data():
     if platform_is_nidap():
         from foundry.transforms import Dataset
