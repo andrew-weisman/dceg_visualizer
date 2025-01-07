@@ -3,6 +3,23 @@ import streamlit as st
 import os
 import pandas as pd
 import plotly.express as px
+import numpy as np
+import subprocess
+
+
+# Check if the platform is NIDAP
+def platform_is_nidap():
+    np.any(['nidap.nih.gov' in x for x in subprocess.run('conda config --show channels', shell=True, capture_output=True).stdout.decode().split('\n')[1:-1]])
+
+
+# Load the data according to the platform we're on
+def load_data():
+    if platform_is_nidap():
+        from foundry.transforms import Dataset
+        return Dataset.get("dummy_dashboardv2").read_table(format="pandas")
+    else:
+        input_dataset = os.path.join(os.getcwd(), 'Dummy_dashboardV2.csv')
+        return pd.read_csv(input_dataset)
 
 
 # Main function definition
@@ -15,8 +32,7 @@ def main():
     cols = st.columns(2)
 
     # Get the input dataset
-    input_dataset = os.path.join(os.getcwd(), 'Dummy_dashboardV2.csv')
-    df = pd.read_csv(input_dataset)
+    df = load_data()
 
     # Preview the dataset
     with cols[0]:
