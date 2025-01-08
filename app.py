@@ -74,9 +74,15 @@ def main():
         point_indices = point_indices
         st.write(filtered_df.iloc[point_indices])
 
-    # Preview the dataset
-    st.subheader('Full dataset')
-    st.write(df)
+    def highlight_selected_rows(row):
+        return ['background-color: yellow' if row.name in point_indices else '' for _ in row]
+
+    if point_indices:
+        st.subheader("Dataset preview with highlighted rows")
+        st.dataframe(df.style.apply(highlight_selected_rows, axis=1))
+    else:
+        st.subheader("Dataset preview")
+        st.dataframe(df)
 
 
 # Run the main function
