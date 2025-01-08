@@ -65,7 +65,9 @@ def main():
         with st.columns(3)[0]:
             marker_size = st.number_input('Marker size:', value=5)
         fig = px.scatter(filtered_df, x=x_column, y=y_column, title=f'{y_column} vs. {x_column}').update_traces(marker=dict(size=marker_size))
-        st.plotly_chart(fig)
+        chart_selection = st.plotly_chart(fig, on_select='rerun')
+        if chart_selection:
+            st.write(f'Selected data points: {chart_selection}')
 
     # Preview the dataset
     st.write(df)
