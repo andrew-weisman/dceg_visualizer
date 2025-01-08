@@ -17,9 +17,11 @@ def platform_is_nidap():
 def load_data():
     if platform_is_nidap():
         from foundry.transforms import Dataset
-        return Dataset.get("dummy_dashboardv2").read_table(format="pandas")
+        dataset_handle_name = "dummy_dashboardv2"
+        return Dataset.get(dataset_handle_name).read_table(format="pandas")
     else:
-        input_dataset = os.path.join(os.getcwd(), 'Dummy_dashboardV2.csv')
+        dataset_file_name = 'Dummy_dashboardV2.csv'
+        input_dataset = os.path.join(os.getcwd(), dataset_file_name)
         return pd.read_csv(input_dataset)
 
 
@@ -27,17 +29,13 @@ def load_data():
 def main():
 
     # Set page configuration
-    page_title = 'Dummy Dashboard'
+    page_title = 'DCEG HALO Metadata Viewer'
     st.set_page_config(page_title=page_title, page_icon=":bar_chart:", layout="wide")
     st.title(page_title)
-    cols = st.columns(2)
+    cols = st.columns([1/3, 2/3])
 
     # Get the input dataset
     df = load_data()
-
-    # Preview the dataset
-    with cols[0]:
-        st.write(df)
 
     # Get numeric columns
     numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
@@ -47,8 +45,8 @@ def main():
 
     # Widgets to choose X and Y columns
     with cols[0]:
-        x_column = st.selectbox('X axis:', options=numeric_columns)
-        y_column = st.selectbox('Y axis:', options=numeric_columns)
+        x_column = st.selectbox('x axis:', options=numeric_columns)
+        y_column = st.selectbox('y axis:', options=numeric_columns)
 
         # Choose a filter column
         filter_column = st.selectbox('Filter column:', options=potential_filter_columns)
@@ -63,9 +61,14 @@ def main():
         filtered_df = df
 
     # Scatter plot
-    fig = px.scatter(filtered_df, x=x_column, y=y_column, title=f'{y_column} vs. {x_column}').update_traces(marker=dict(size=5))
     with cols[1]:
+        with st.columns(3)[0]:
+            marker_size = st.number_input('Marker size:', value=5)
+        fig = px.scatter(filtered_df, x=x_column, y=y_column, title=f'{y_column} vs. {x_column}').update_traces(marker=dict(size=marker_size))
         st.plotly_chart(fig)
+
+    # Preview the dataset
+    st.write(df)
 
 
 # Run the main function
