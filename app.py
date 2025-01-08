@@ -66,10 +66,16 @@ def main():
             marker_size = st.number_input('Marker size:', value=5)
         fig = px.scatter(filtered_df, x=x_column, y=y_column, title=f'{y_column} vs. {x_column}').update_traces(marker=dict(size=marker_size))
         chart_selection = st.plotly_chart(fig, on_select='rerun')
-        if chart_selection:
-            st.write(f'Selected data points: {chart_selection}')
+
+    # Show the selected data points
+    point_indices = chart_selection['selection']['point_indices']
+    if point_indices:
+        st.subheader('Selected points')
+        point_indices = point_indices
+        st.write(filtered_df.iloc[point_indices])
 
     # Preview the dataset
+    st.subheader('Full dataset')
     st.write(df)
 
 
