@@ -32,7 +32,7 @@ def main():
     page_title = 'DCEG HALO Metadata Viewer'
     st.set_page_config(page_title=page_title, page_icon=":bar_chart:", layout="wide")
     st.title(page_title)
-    cols = st.columns([1/3, 2/3])
+    cols = st.columns([1/3, 2/3], border=True)
 
     # Get the input dataset
     df = load_data()
